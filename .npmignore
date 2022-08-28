@@ -1,0 +1,7 @@
+.gitignore
+package-lock.json
+node_modules
+./*/index.ts
+tsconfig.json
+tsconfig.tsbuildinfo
+__tests__
