@@ -192,29 +192,29 @@ export type FileOutputOption = {
 //=============================================================================================================
 /**
  * テストケース一式を生成する。
- * @param tree_domain 
- * @param default_tree 
+ * @param domain 
+ * @param defaults 
  * @param exclusions 
  * @param perspectives 
  * @returns 
  */
 export function generateTests<D extends TreeDomain>(
-  tree_domain:  		D,
-  default_tree: 		Tree<D>, 
+  domain:  				D,
+  defaults: 			Defaults<D>, 
   exclusions:   		Exclusions<D>,
   perspectives: 		Perspectives<D>, 
-  file_out_option?:	FileOutputOption,
+  file_out_option?:		FileOutputOption,
 ){
   // 全パラメータを取得（例： "Given.ユーザ.種別", "When.ブラウザ.起動.する"）
-  let test_domain:ListDomain<D> = {}
-  treeDomainToListDomain<D>(test_domain, tree_domain)
+  let list_domain:ListDomain<D> = {}
+  treeDomainToListDomain<D>(list_domain, domain)
 
   // デフォルトのテストケースを作成
-  let default_test:List<D> = {}
-  treeToList<D>(default_test, default_tree)
+  let list_default:List<D> = {}
+  treeToList<D>(list_default, defaults)
 
   // テスト一覧を作成
-  let tests:List<D>[] = []
+  let tests:Test<D>[] = []
   for(let perspective of perspectives){
     //------------------------------------------------
     // ある観点について展開
@@ -222,7 +222,7 @@ export function generateTests<D extends TreeDomain>(
     //------------------------------------------------
     // 定数をベースのテストケースに反映する
     //------------------------------------------------
-    let base_test : List<D> = {...default_test}
+    let base_test : Test<D> = {...list_default}
     for(let key in perspective.constants){
       base_test[key] = perspective.constants[key]
     }
@@ -232,7 +232,7 @@ export function generateTests<D extends TreeDomain>(
     tests = [
 			...tests,
 			...generateTestsByPerspective<D>(
-				test_domain,
+				list_domain,
 				perspective, 
 				base_test, 
 				exclusions,
@@ -267,7 +267,8 @@ export function generateTests<D extends TreeDomain>(
 			// テーブルへの変換
 			fs.writeFile(`./${file_out_option.markdown.file_path}`, 
 				toMarkdown(toTable(
-					test_domain, tests, 
+					list_domain,
+					tests, 
 					file_out_option.markdown.true_symbol, 
 					file_out_option.markdown.false_symbol
 				)), 
@@ -341,51 +342,42 @@ function treeToList<D extends TreeDomain>(
  * 観点をもとにテストケースを生成する。
  * 再帰関数。
  * @param tests 
- * @param test_domain 
+ * @param list_domain 
  * @param perspective 
  * @param base_test 
  * @param exclusions 
  * @param v 
  */
 function generateTestsByPerspective<D extends TreeDomain>(
-    test_domain:  ListDomain<D>,
+    list_domain:  ListDomain<D>,
     perspective:  Perspective<D>,
-    base_test:    List<D>,
+    base_test:    Test<D>,
     exclusions:   Exclusions<D>,
-  ){
-		//let nows = []
-		//nows.push(Date.now())
+  ):Test<D>[]{
 		//---------------------------------------------------
 		// 1. 網羅すべき組み合わせ一式を取得
 		//---------------------------------------------------
 		let requirements: List<D>[] = getRequirements(
-			test_domain,
+			list_domain,
 			perspective, 
 			exclusions,
 		)
-
-		//nows.push(Date.now())
 		//---------------------------------------------------
 		// 2. 被覆配列(CoveringArray)を生成
 		//---------------------------------------------------
-		let tests: List<D>[] = [];
+		let tests: Test<D>[] = [];
 		generateCoveringArray(tests, requirements)
-
-		//nows.push(Date.now())
 		//---------------------------------------------------
 		// 3. 空きセルにデフォルト値を追記
 		//---------------------------------------------------
 		applyBaseTestToCoveringArray(tests, base_test)
 
-		//nows.push(Date.now())
 		//---------------------------------------------------
 		// 4. 禁則があてはまるテストは除外
 		//---------------------------------------------------
 		tests = tests.filter(test => {
 			return !isExcluded(test, exclusions)
 		})
-
-		//nows.push(Date.now())
 		//---------------------------------------------------
 		// 5. 観点名(Perspective) と 期待結果(Then) の追記
 		//---------------------------------------------------
@@ -395,16 +387,12 @@ function generateTestsByPerspective<D extends TreeDomain>(
 			// 期待結果を追記
 			perspective.expect(tests[t])
 		}
-		//nows.push(Date.now())
-
-		//console.log(nows.map(now => now - nows[0]))
-
 		// 返却
 		return tests
 }
 
 function getRequirements<D extends TreeDomain>(
-  test_domain:  ListDomain<D>,
+  list_domain:  ListDomain<D>,
   perspective : Perspective<D>,
   exclusions: Exclusions<D>,
 ):List<D>[]{
@@ -426,7 +414,7 @@ function getRequirements<D extends TreeDomain>(
 		getFullCoverage(
 			requirements,
 			{},
-			test_domain,
+			list_domain,
 			combination,
 			exclusions,
 			0,
@@ -466,15 +454,15 @@ function getSubsetArrays<T extends any>(array: readonly T[], m:number):T[][]{
  * variablesについての完全網羅リストを取得する
  * @param lists 
  * @param base_list 
- * @param test_domain 
+ * @param list_domain 
  * @param variables 
  * @param exclusions 
  * @param v 
  */
 function getFullCoverage<D extends TreeDomain>(
-  lists: List<D>[],
-  base_list : List<D>,
-  test_domain:  ListDomain<D>,
+  lists: 		List<D>[],
+  base_list : 	List<D>,
+  list_domain:  ListDomain<D>,
   variables : readonly [Path<D>][number][],
   exclusions: Exclusions<D>,
   v: number,
@@ -485,13 +473,13 @@ function getFullCoverage<D extends TreeDomain>(
     // 満たすべき組み合わせが網羅されるまで再帰
     //-------------------------------------------------
     const variable: Path<D> = variables[v]
-    for(let c in test_domain[variable]){
-      const choice = test_domain[variable][c]
+    for(let c in list_domain[variable]){
+      const choice = list_domain[variable][c]
       list[variable as any] = choice
       getFullCoverage(
         lists, 
         list,
-        test_domain, 
+        list_domain, 
         variables, 
         exclusions,
         v+1, 
@@ -514,7 +502,7 @@ function getFullCoverage<D extends TreeDomain>(
  * @param requirements 
  */
 function generateCoveringArray<D extends TreeDomain>(
-	tests:        List<D>[],
+	tests:        Test<D>[],
 	requirements: List<D>[],
 ){
 	for(const req of requirements){
@@ -573,8 +561,8 @@ function generateCoveringArray<D extends TreeDomain>(
  * 被覆配列の空きセルを、デフォルト値で埋める
  */
 function applyBaseTestToCoveringArray<D extends TreeDomain>(
-	tests:        List<D>[],
-	base_test:    List<D>,
+	tests:        Test<D>[],
+	base_test:    Test<D>,
 ){
 	const keys = Object.keys(base_test)
 	for(const t in tests){
@@ -594,7 +582,7 @@ function applyBaseTestToCoveringArray<D extends TreeDomain>(
  * @returns 
  */
 function isExcluded<D extends TreeDomain>(
-  test:         List<D>,
+  test:         Test<D>,
   exclusions:   Exclusions<D>,
 ){
   return exclusions.some((exclusion) => {
