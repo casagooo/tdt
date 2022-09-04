@@ -9,7 +9,7 @@
  */
 import { generateTests, Exclusions, List, Perspectives, Tree } from '../../index';
 
-const tree_domain = {
+const domain = {
     "Given":{
         "User":{
             "Age":[
@@ -41,8 +41,8 @@ const tree_domain = {
         "Any",
     ],
 } as const;
-type ExampleDomain = typeof tree_domain
-const default_tree:Tree<ExampleDomain> = {
+type ExampleDomain = typeof domain
+const defaults:Tree<ExampleDomain> = {
     "Given":{
         "User":{
             "Age":"10-19",
@@ -89,8 +89,8 @@ const perspectives:Perspectives<ExampleDomain> = [
     }
 ] as const;
 const tests = generateTests(
-    tree_domain,
-    default_tree,
+    domain,
+    defaults,
     exclusions,
     perspectives,
     {

@@ -4,9 +4,9 @@
  * テストケースから除外する条件に、正規表現を利用する例。
  * この場合、正規表現で指定するパターンにおいて、IDEによる補完の恩恵は得られない。
  */
-import { generateTests, Exclusions, List, Perspectives, Tree } from '../../index';
+import { generateTests, Exclusions, List, Perspectives, Tree, Defaults } from '../../index';
 
-const example_domain = {
+const domain = {
     "Given":{
         "Student":{
             "Course":[
@@ -31,8 +31,8 @@ const example_domain = {
         "Any",
     ],
 } as const;
-type ExampleDomain = typeof example_domain
-const default_tree:Tree<ExampleDomain> = {
+type ExampleDomain = typeof domain
+const defaults:Defaults<ExampleDomain> = {
     "Given":{
         "Student":{
             "Course":"Bachelor",
@@ -72,8 +72,8 @@ const perspectives:Perspectives<ExampleDomain> = [
     }
 ] as const;
 const tests = generateTests(
-    example_domain,
-    default_tree,
+    domain,
+    defaults,
     exclusions,
     perspectives,
 )
