@@ -14,6 +14,73 @@ This tool also has following features.
 ## Install
 `npm install tdt`
 
+## Example
+You can generate test cases as in the following example. The output format is an array of objects. One object corresponds to one test case.
+
+###### Example:
+```
+const tests = generateTests(
+	domain,
+	defaults,
+	exclusions,
+	perspectives,
+);
+
+console.log(tests)
+/*
+[
+	{
+		'Condition.User.IsRegistered': 'True',
+		'Condition.User.IsAdmin': 'True',
+		'Condition.Device': 'Mobile',
+		ExpectedResult: 'Failure',
+		Perspective: 'Only registered users accessed from PC can access.',
+		ID: '1'
+	},
+	{
+		'Condition.User.IsRegistered': 'True',
+		'Condition.User.IsAdmin': 'True',
+		'Condition.Device': 'PC',
+		ExpectedResult: 'Success',
+		Perspective: 'Only registered users accessed from PC can access.',
+		ID: '2'
+	},
+	{
+		'Condition.User.IsRegistered': 'True',
+		'Condition.User.IsAdmin': 'False',
+		'Condition.Device': 'Mobile',
+		ExpectedResult: 'Failure',
+		Perspective: 'Only registered users accessed from PC can access.',
+		ID: '3'
+	},
+	{
+		'Condition.User.IsRegistered': 'True',
+		'Condition.User.IsAdmin': 'False',
+		'Condition.Device': 'PC',
+		ExpectedResult: 'Success',
+		Perspective: 'Only registered users accessed from PC can access.',
+		ID: '4'
+	},
+	{
+		'Condition.User.IsRegistered': 'False',
+		'Condition.User.IsAdmin': 'False',
+		'Condition.Device': 'Mobile',
+		ExpectedResult: 'Failure',
+		Perspective: 'Only registered users accessed from PC can access.',
+		ID: '5'
+	},
+	{
+		'Condition.User.IsRegistered': 'False',
+		'Condition.User.IsAdmin': 'False',
+		'Condition.Device': 'PC',
+		ExpectedResult: 'Failure',
+		Perspective: 'Only registered users accessed from PC can access.',
+		ID: '6'
+	}
+]
+*/
+```
+
 ## Usage
 To generate testcases, following inputs are required.
 
@@ -22,7 +89,6 @@ To generate testcases, following inputs are required.
 3. Combinations of the values to be excluded
 4. Perspectives of the testing
 
-### Inputs
 ####  1. Domains of the parameters
 This should include all of the possible values of all parameters related with test condition, including expected results. 
 ###### Example:
@@ -111,71 +177,6 @@ const perspectives:Perspectives<ExampleDomain> = [
 ] as const;
 ```
 
-### Outputs
-You can get generated test cases by calling `generateTests` function with prepared inputs above.
-###### Example:
-```
-const tests = generateTests(
-	domain,
-	defaults,
-	exclusions,
-	perspectives,
-);
-
-console.log(tests)
-/*
-[
-	{
-		'Condition.User.IsRegistered': 'True',
-		'Condition.User.IsAdmin': 'True',
-		'Condition.Device': 'Mobile',
-		ExpectedResult: 'Failure',
-		Perspective: 'Only registered users accessed from PC can access.',
-		ID: '1'
-	},
-	{
-		'Condition.User.IsRegistered': 'True',
-		'Condition.User.IsAdmin': 'True',
-		'Condition.Device': 'PC',
-		ExpectedResult: 'Success',
-		Perspective: 'Only registered users accessed from PC can access.',
-		ID: '2'
-	},
-	{
-		'Condition.User.IsRegistered': 'True',
-		'Condition.User.IsAdmin': 'False',
-		'Condition.Device': 'Mobile',
-		ExpectedResult: 'Failure',
-		Perspective: 'Only registered users accessed from PC can access.',
-		ID: '3'
-	},
-	{
-		'Condition.User.IsRegistered': 'True',
-		'Condition.User.IsAdmin': 'False',
-		'Condition.Device': 'PC',
-		ExpectedResult: 'Success',
-		Perspective: 'Only registered users accessed from PC can access.',
-		ID: '4'
-	},
-	{
-		'Condition.User.IsRegistered': 'False',
-		'Condition.User.IsAdmin': 'False',
-		'Condition.Device': 'Mobile',
-		ExpectedResult: 'Failure',
-		Perspective: 'Only registered users accessed from PC can access.',
-		ID: '5'
-	},
-	{
-		'Condition.User.IsRegistered': 'False',
-		'Condition.User.IsAdmin': 'False',
-		'Condition.Device': 'PC',
-		ExpectedResult: 'Failure',
-		Perspective: 'Only registered users accessed from PC can access.',
-		ID: '6'
-	}
-]
-*/
-```
 ## Features
 ### File Output
 Specifying some options in the `generateTests` arguments, you can output the test cases as files.
