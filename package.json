@@ -11,17 +11,28 @@
     "type": "git",
     "url": "git+https://github.com/casagooo/tdt.git"
   },
-  "keywords": ["typescript","testing","test","testcase","typed","generics","generic types","software test","generate","decision table","pairwise testing"],
+  "keywords": [
+    "typescript",
+    "testing",
+    "test",
+    "testcase",
+    "typed",
+    "generics",
+    "generic types",
+    "software test",
+    "generate",
+    "decision table",
+    "pairwise testing"
+  ],
   "bugs": {
     "url": "https://github.com/casagooo/tdt/issues"
   },
   "homepage": "https://github.com/casagooo/tdt#readme",
-  "dependencies": {},
   "devDependencies": {
-    "@types/node": "^17.0.19",
-    "nodemon": "^2.0.15",
-    "ts-node": "^10.5.0",
-    "typescript": "^4.5.5"
+    "@types/node": "^18.11.18",
+    "nodemon": "^2.0.20",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
   },
   "scripts": {
     "start": "npm run build:live",
@@ -34,5 +45,8 @@
     "example:input_files": "rm -rf ./lib;npm run build;mkdir ./lib/examples;mkdir ./lib/examples/input_files;cp ./examples/input_files/* ./lib/examples/input_files;cd ./lib;node index.js"
   },
   "author": "casago",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "got": "^12.5.3"
+  }
 }
