@@ -7,7 +7,7 @@
  */
  import { generateTests, Exclusions, List, Perspectives, Tree } from '../../index';
 
- const example_domain = {
+ const domain = {
     "Given":{
         "Student":{
             "Course":[
@@ -32,7 +32,7 @@
         "Any",
     ],
 } as const;
-const default_tree = {
+const defaults = {
     "Given":{
         "Student":{
             "Course":"Bachelor",
@@ -76,8 +76,8 @@ const perspectives = [
     }
 ] as const;
 const tests = generateTests(
-    example_domain,
-    default_tree,
+    domain,
+    defaults,
     exclusions,
     perspectives,
 )
