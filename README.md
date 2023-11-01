@@ -1,21 +1,21 @@
 # Typed Decision Table
 ## Overview
-This is a Typescript tool for generating test cases in the form of a [Decision Table](https://www.ibm.com/docs/en/bpmoc?topic=SS964W/com.ibm.wbpm.admin.doc/topics/cbre_busiru_decisiontable.html) from minimal inputs. You don't have to input every cell in the table manually any more.
+This tool, written in Typescript, automates the generation of test cases in the form of a [Decision Table](https://www.ibm.com/docs/en/bpmoc?topic=SS964W/com.ibm.wbpm.admin.doc/topics/cbre_busiru_decisiontable.html) from minimal inputs. There's no need to manually input each cell in the table.
 
-Thanks to generics of Typescript, this tool outputs test cases typed according to your inputs.
-This makes you easy to treat keys and values of the test cases correctly in your any test code. 
+Leveraging the power of Typescript generics, the tool ensures that the generated test cases are typed according to your specifications. This feature facilitates the accurate handling of keys and values in any test code you write.
 
-Not only outputs of this tool but also some of inputs are typed with generics. This makes you easy to prepare required inputs correctly.
+Furthermore, not just the outputs but also some of the inputs are typed using generics, streamlining the process of preparing the necessary inputs.
 
-This tool also has following features.
-- File output (JSON / Markdown)
-- Support for `strength` of [Covering Array](https://math.nist.gov/coveringarrays/coveringarray.html)
+Additional features of this tool include:
+
+- File output in JSON or Markdown format.
+- Support for the strength of the [Covering Array](https://math.nist.gov/coveringarrays/coveringarray.html).
 
 ## Install
 `npm install tdt`
 
 ## Example
-You can generate test cases as in the following example. The output format is an array of objects. One object corresponds to one test case.
+Generate test cases as shown in the example below. The output is an array of objects, with each object representing a single test case.
 
 ###### Example:
 ```
@@ -82,15 +82,16 @@ console.log(tests)
 ```
 
 ## Usage
-To generate testcases, following inputs are required.
+To generate test cases, you'll need the following inputs:
 
-1. Domains of the parameters (Possible values of the parameters)
-2. Default values of the parameters
-3. Combinations of the values to be excluded
-4. Perspectives of the testing
+- Parameter domains (all potential values for the parameters).
+- Default values for the parameters.
+- Combinations of values to exclude.
+- Testing perspectives.
 
-####  1. Domains of the parameters
-This should include all of the possible values of all parameters related with test condition, including expected results. 
+#### 1. Parameter Domains
+List all potential values for every parameter associated with the test condition. This should also encompass expected results.
+
 ###### Example:
 ```
 const domain = {
@@ -118,10 +119,10 @@ const domain = {
 } as const;
 type ExampleDomain = typeof domain;
 ```
- This is the only input which is not typed as a generic type. This can be defined as any structure as long as it satisfies the required conditions. According to this structure, the rest of the inputs, `2.`,`3.` and `4.`, will be typed automatically.
+Unlike other inputs, this one isn't typed as a generic type. You have the flexibility to define its structure, provided it meets the necessary criteria. Based on this structure, the subsequent inputs (items `2.`, `3.`, and `4.`) will be automatically typed.
 
-#### 2. Default values of the parameters
-This should be the default values of the parameters defined in `1.`. You have to choose a value from the possible values about each parameters. This is used only when the parameter is not specified in the test case. 
+#### 2. Default Values for the Parameters
+Specify the default values for the parameters outlined in section `1.`. For each parameter, select a value from the list of potential values. These defaults are used when a parameter value isn't explicitly set in a test case.
 ###### Example:
 ```
 const defaults : Defaults<ExampleDomain> = {
@@ -136,8 +137,8 @@ const defaults : Defaults<ExampleDomain> = {
 } as const;
 ```
 
-#### 3. Combinations of the values to be excluded
-This is used to exclude impossible or meanless combinations of the parameter values. This can have multiple combinations.
+#### 3. Combinations of Values to Exclude
+Use this to omit combinations of parameter values that are either impossible or lack significance. Multiple combinations can be excluded.
 ###### Example:
 ```
 const exclusions:Exclusions<ExampleDomain> = [
@@ -148,8 +149,8 @@ const exclusions:Exclusions<ExampleDomain> = [
 ] as const;
 ```
 
-#### 4. Perspectives of the testing
-This specifies how to generate test cases. In general, all of test cases must be defined based on the perspective, what to check in testing. Therefore, all tests in this tool are generated according to specified perspectives.
+#### 4. Testing Perspectives
+This determines the approach for generating test cases. Typically, test cases should be formulated based on a specific perspective or focus. Hence, this tool generates all test cases in alignment with the provided perspectives.
 
 ###### Example:
 ```
@@ -178,9 +179,10 @@ const perspectives:Perspectives<ExampleDomain> = [
 ```
 
 ## Features
-### File Output
-Specifying some options in the `generateTests` arguments, you can output the test cases as files.
-###### Example of specifying option:
+### File Output in JSON or Markdown Format
+By setting certain options in the `generateTests` arguments, you can export the test cases to files.
+
+###### Example of setting an option:
 ```:diff
 const tests = generateTests(
 	domain,
@@ -199,7 +201,7 @@ const tests = generateTests(
 +	}
 );
 ```
-###### Example of JSON file:
+###### Example of a JSON file:
 ```
 [
 	{
@@ -252,7 +254,7 @@ const tests = generateTests(
 	}
 ]
 ```
-###### Example of Markdown file:
+###### Example of a Markdown file:
 |||#1|#2|#3|#4|#5|#6|
 |--|--|--|--|--|--|--|--|
 |Condition.User.IsRegistered|True|X|X|X|X|-|-|
@@ -266,14 +268,14 @@ const tests = generateTests(
 ||Any|-|-|-|-|-|-|
 
 
-### Support for `strength` of Covering Array
-Default behavior of this tool is to generate all of the combinations of the `variables` specified in the `perspectives`. But this can lead to an explosion in the number of test cases. 
+### Support for `strength` in Covering Array
+By default, this tool generates all possible combinations of the `variables` defined in the `perspectives`. However, this can result in a significantly large number of test cases.
 
-To prevent this, you can specify `strength` in each `perspective`. If you specify `strength`,  less effective test cases will be removed. The `strength` can be between `2` and the number of `variables` in the `perspective`, and the smaller the `strength`, the smaller the number of test cases. 
+To mitigate this, you can set the `strength` for each `perspective`. By adjusting the `strength`, less relevant test cases will be filtered out. The `strength` value can range from `2` up to the total number of `variables` in the perspective. A lower `strength` value will yield fewer test cases.
 
-For example, if the `perspective` is like shown below, the number of `variables` is `3`. Therefore `strength` can be between `2` and `3`.
+For instance, if the `perspective` is structured as below, and there are `3` `variables`, the `strength` can be set anywhere between `2` and `3`.
 
-###### Example of specifying strength:
+###### Example of setting the `strength`:
 ```:diff
 {
 	"title": "Only registered users accessed from PC can access.",
