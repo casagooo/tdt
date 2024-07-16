@@ -1,9 +1,9 @@
 /**
  * Basic Example
  * 
- * generateTestsの各引数の宣言時に、型を指定する例。
- * この場合は、引数作成時にIDEによる補完の恩恵を得られる。
- * 引数に不備がある場合は、エラーとなる。
+ * An example of specifying types when declaring each argument in generateTests. 
+ * In this case, you can benefit from IDE autocompletion when creating arguments. 
+ * If there is an issue with the arguments, an error will occur.
  */
 import { generateTests, Exclusions, Perspectives, Defaults, Test } from '../../index';
 

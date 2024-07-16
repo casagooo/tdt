@@ -1,8 +1,8 @@
 /**
  * RegExp Exclusion Example
  * 
- * テストケースから除外する条件に、正規表現を利用する例。
- * この場合、正規表現で指定するパターンにおいて、IDEによる補完の恩恵は得られない。
+ * An example of using regular expressions to exclude conditions from test cases. 
+ * In this case, the benefits of IDE autocompletion are not available for patterns specified by regular expressions.
  */
 import { generateTests, Exclusions, List, Perspectives, Tree, Defaults } from '../../index';
 

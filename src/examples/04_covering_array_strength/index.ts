@@ -1,11 +1,9 @@
 /**
  * Covering Array Strength Example
  * 
- * Covering Arrayの概念を導入し、
- * 各Persprctiveにて強度の指定をすることで、
- * 比較的有効性の低いテストケースを削減できる。
- * 
- * 何も指定しない場合は、完全網羅となる。
+ * By introducing the concept of Covering Array and specifying the strength for each Perspective,
+ * it is possible to reduce relatively less effective test cases. 
+ * If nothing is specified, it results in complete coverage.
  */
 import { generateTests, Exclusions, List, Perspectives, Tree } from '../../index';
 

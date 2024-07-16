@@ -1,9 +1,9 @@
 /**
  * Not Typed Args Example
  * 
- * generateTestsの各引数の宣言時に、型を指定しない例。
- * この場合は、引数作成時にIDEによる補完は効かない。
- * 引数に不備がある場合は、エラーとなる。
+ * An example of not specifying types when declaring each argument in generateTests. 
+ * In this case, IDE autocompletion will not be effective when creating arguments. 
+ * An error will occur only if there is an issue with the arguments.
  */
  import { generateTests, Exclusions, List, Perspectives, Tree } from '../../index';
 
