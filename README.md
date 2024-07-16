@@ -84,12 +84,15 @@ console.log(tests)
 ## Usage
 To generate test cases, you'll need the following inputs:
 
-- Parameter domains (all potential values for the parameters).
-- Default values for the parameters.
-- Combinations of values to exclude.
-- Testing perspectives.
+1. Prepare arguments of `generateTests` function.
+	1-1. Parameter domains (all potential values for the parameters).
+	1-2. Default values for the parameters.
+	1-3. Combinations of values to exclude.
+	1-4. Testing perspectives.
+2. Call `generateTests` function.
 
-#### 1. Parameter Domains
+### 1. Prepare arguments of `generateTests` function
+#### 1-1. Parameter Domains
 List all potential values for every parameter associated with the test condition. This should also encompass expected results.
 
 ###### Example:
@@ -121,7 +124,7 @@ type ExampleDomain = typeof domain;
 ```
 Unlike other inputs, this one isn't typed as a generic type. You have the flexibility to define its structure, provided it meets the necessary criteria. Based on this structure, the subsequent inputs (items `2.`, `3.`, and `4.`) will be automatically typed.
 
-#### 2. Default Values for the Parameters
+#### 1-2. Default Values for the Parameters
 Specify the default values for the parameters outlined in section `1.`. For each parameter, select a value from the list of potential values. These defaults are used when a parameter value isn't explicitly set in a test case.
 ###### Example:
 ```
@@ -137,7 +140,7 @@ const defaults : Defaults<ExampleDomain> = {
 } as const;
 ```
 
-#### 3. Combinations of Values to Exclude
+#### 1-3. Combinations of Values to Exclude
 Use this to omit combinations of parameter values that are either impossible or lack significance. Multiple combinations can be excluded.
 ###### Example:
 ```
@@ -149,7 +152,7 @@ const exclusions:Exclusions<ExampleDomain> = [
 ] as const;
 ```
 
-#### 4. Testing Perspectives
+#### 1-4. Testing Perspectives
 This determines the approach for generating test cases. Typically, test cases should be formulated based on a specific perspective or focus. Hence, this tool generates all test cases in alignment with the provided perspectives.
 
 ###### Example:
@@ -176,6 +179,16 @@ const perspectives:Perspectives<ExampleDomain> = [
 		},
 	}
 ] as const;
+```
+### 2. Call `generateTests` function
+```
+const tests = generateTests(
+    domain,
+    defaults,
+    exclusions,
+    perspectives,
+);
+console.log(tests)
 ```
 
 ## Features
