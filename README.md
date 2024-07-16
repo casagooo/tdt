@@ -1,6 +1,6 @@
 # Typed Decision Table
 ## Overview
-This tool, written in Typescript, automates the generation of test cases in the form of a [Decision Table](https://www.ibm.com/docs/en/bpmoc?topic=SS964W/com.ibm.wbpm.admin.doc/topics/cbre_busiru_decisiontable.html) from minimal inputs. There's no need to manually input each cell in the table.
+This tool, written in Typescript, automates the generation of test cases in the form of a [Decision Table](https://www.visual-paradigm.com/product/articles/decision-table-explained/) from minimal inputs. There's no need to manually input each cell in the table.
 
 Leveraging the power of Typescript generics, the tool ensures that the generated test cases are typed according to your specifications. This feature facilitates the accurate handling of keys and values in any test code you write.
 
