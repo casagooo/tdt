@@ -253,7 +253,7 @@ export function generateTests<D extends TreeDomain>(
 		// JSON format
 		//-----------------------
 		if(file_out_option.json){
-			fs.writeFile(`./${file_out_option.json.file_path}`, 
+			fs.writeFile(`${file_out_option.json.file_path}`, 
 				JSON.stringify(tests, null, '\t'), 
 				(err) => {if(err)console.log(err)}
 			);
@@ -263,7 +263,7 @@ export function generateTests<D extends TreeDomain>(
 		//-----------------------
 		if(file_out_option.markdown){
 			// Convert to a table
-			fs.writeFile(`./${file_out_option.markdown.file_path}`, 
+			fs.writeFile(`${file_out_option.markdown.file_path}`, 
 				toMarkdown(toTable(
 					list_domain,
 					tests, 

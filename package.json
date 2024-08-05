@@ -1,6 +1,6 @@
 {
   "name": "tdt",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Typed Decision Table",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
