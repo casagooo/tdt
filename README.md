@@ -19,12 +19,12 @@ Generate test cases as shown in the example below. The output is an array of obj
 
 ###### Example:
 ```
-const tests = generateTests(
+const tests = generateTests({
 	domain,
 	defaults,
 	exclusions,
 	perspectives,
-);
+});
 
 console.log(tests)
 /*
@@ -182,27 +182,27 @@ const perspectives:Perspectives<ExampleDomain> = [
 ```
 ### 2. Call `generateTests` function
 ```
-const tests = generateTests(
+const tests = generateTests({
     domain,
     defaults,
     exclusions,
     perspectives,
-);
+});
 console.log(tests)
 ```
 
 ## Features
-### File Output in JSON or Markdown Format
+### Export in JSON or Markdown Format
 By setting certain options in the `generateTests` arguments, you can export the test cases to files.
 
 ###### Example of setting an option:
 ```:diff
-const tests = generateTests(
+const tests = generateTests({
 	domain,
 	defaults,
 	exclusions,
 	perspectives,
-+	{
++	export_option: {
 +		json:{
 +			file_path: '01.json',
 +		},
@@ -212,7 +212,7 @@ const tests = generateTests(
 +			false_symbol: '-'
 +		}
 +	}
-);
+});
 ```
 ###### Example of a JSON file:
 ```

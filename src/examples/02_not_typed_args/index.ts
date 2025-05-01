@@ -75,10 +75,10 @@ const perspectives = [
         }
     }
 ] as const;
-const tests = generateTests(
+const tests = generateTests({
     domain,
     defaults,
     exclusions,
     perspectives,
-)
+})
 console.log(tests)

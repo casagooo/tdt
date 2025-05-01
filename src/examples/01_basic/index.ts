@@ -69,10 +69,10 @@ const perspectives:Perspectives<ExampleDomain> = [
         },
     }
 ] as const;
-const tests = generateTests(
+const tests = generateTests({
     domain,
-    defaults,
+    //defaults,
     exclusions,
     perspectives,
-);
+});
 console.log(tests)

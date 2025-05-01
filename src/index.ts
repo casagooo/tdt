@@ -172,9 +172,9 @@ type Exclusion<D extends TreeDomain> = {
 export type Exclusions<D extends TreeDomain> = readonly Exclusion<D>[]
 
 /**
- * Options for file output
+ * Options for file export
  */
-export type FileOutputOption = {
+export type ExportOption = {
 	json? : {
 		file_path :string
 	},
@@ -185,35 +185,45 @@ export type FileOutputOption = {
 	}
 }
 
+/**
+ * Options for generating tests
+ */
+export type GeneratingOption<D extends TreeDomain> = {
+	domain:  			D,
+	defaults?: 			Defaults<D>, 
+	exclusions:   		Exclusions<D>,
+	perspectives: 		Perspectives<D>, 
+	export_option?:		ExportOption,
+}
+
 //=============================================================================================================
 //	Functions
 //=============================================================================================================
 /**
  * Generates a complete set of testcases.
- * @param domain 
- * @param defaults 
- * @param exclusions 
- * @param perspectives 
+ * @param option 
  * @returns 
  */
 export function generateTests<D extends TreeDomain>(
-  domain:  				D,
-  defaults: 			Defaults<D>, 
-  exclusions:   		Exclusions<D>,
-  perspectives: 		Perspectives<D>, 
-  file_out_option?:		FileOutputOption,
+	option:	GeneratingOption<D>
 ){
   // Retrieve all parameters (example: "Given.User.Type", "When.Browser.Start")
   let list_domain:ListDomain<D> = {}
-  treeDomainToListDomain<D>(list_domain, domain)
+  treeDomainToListDomain<D>(list_domain, option.domain)
 
   // Create the default testcase
   let list_default:List<D> = {}
-  treeToList<D>(list_default, defaults)
+  if(option.defaults !== undefined){
+  	treeToList<D>(list_default, option.defaults)
+  }else{
+	getDefaultTest<D>(list_default, option.domain)
+  }
+  console.log("============ Default Test ============")
+  console.log(list_default)
 
   // Create the list of tests
   let tests:Test<D>[] = []
-  for(let perspective of perspectives){
+  for(let perspective of option.perspectives){
     //------------------------------------------------
     // Expand based on a particular perspective
     //------------------------------------------------
@@ -233,7 +243,7 @@ export function generateTests<D extends TreeDomain>(
 				list_domain,
 				perspective, 
 				base_test, 
-				exclusions,
+				option.exclusions,
 			)
 		]
   }
@@ -241,19 +251,19 @@ export function generateTests<D extends TreeDomain>(
   // Assign ID to all testcases
   let id = 1
   for(let t in tests){
-    tests[t].ID = `${id}`
+    tests[t]["ID"] = `${id}`
     id++
   }
   //-----------------------------------------------------
   // File output
   //-----------------------------------------------------
-  if(file_out_option){
+  if(option.export_option){
 		const fs = require('fs')
 		//-----------------------
 		// JSON format
 		//-----------------------
-		if(file_out_option.json){
-			fs.writeFile(`${file_out_option.json.file_path}`, 
+		if(option.export_option.json){
+			fs.writeFile(`${option.export_option.json.file_path}`, 
 				JSON.stringify(tests, null, '\t'), 
 				(err) => {if(err)console.log(err)}
 			);
@@ -261,14 +271,14 @@ export function generateTests<D extends TreeDomain>(
 		//-----------------------
 		// Markdown format
 		//-----------------------
-		if(file_out_option.markdown){
+		if(option.export_option.markdown){
 			// Convert to a table
-			fs.writeFile(`${file_out_option.markdown.file_path}`, 
+			fs.writeFile(`${option.export_option.markdown.file_path}`, 
 				toMarkdown(toTable(
 					list_domain,
 					tests, 
-					file_out_option.markdown.true_symbol, 
-					file_out_option.markdown.false_symbol
+					option.export_option.markdown.true_symbol, 
+					option.export_option.markdown.false_symbol
 				)), 
 				(err) => {if(err)console.log(err)}
 			);
@@ -303,6 +313,27 @@ function treeDomainToListDomain<D extends TreeDomain>(
     }else{
 	  // Further recursively expand
       treeDomainToListDomain(result, value, path)
+    }
+  }
+}
+
+/**
+ * Converts variables from TreeDomain type to Test type.
+ * @param result 
+ * @param domain 
+ */
+function getDefaultTest<D extends TreeDomain>(
+    result:     Test<D>, 
+    domain:		TreeDomain, 
+  ){
+  for(const key in domain){
+    const value = domain[key]
+    if(isLeafOfTreeDomain(value)){
+		// It's a leaf node, so register the first choice
+      	result[key] = value[0]
+    }else{
+	  // Further recursively expand
+      getDefaultTest(result, value)
     }
   }
 }

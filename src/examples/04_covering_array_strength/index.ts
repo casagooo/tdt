@@ -86,12 +86,12 @@ const perspectives:Perspectives<ExampleDomain> = [
         "strength" : 2,
     }
 ] as const;
-const tests = generateTests(
+const tests = generateTests({
     domain,
     defaults,
     exclusions,
     perspectives,
-    {
+    export_option: {
         json:{
             file_path: '04.json',
         },
@@ -101,5 +101,5 @@ const tests = generateTests(
             false_symbol: '-',
         }
     },
-)
+})
 console.log(tests)
