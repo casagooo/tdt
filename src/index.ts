@@ -9,7 +9,7 @@ type CoveringStrength = 0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19
 /**
  * Type used as an index within recursive iterations
  */	
- type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 	11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...0[]]
 
 /**
@@ -222,7 +222,7 @@ export function generateTests<D extends TreeDomain>(
   console.log(list_default)
 
   // Create the list of tests
-  let tests:Test<D>[] = []
+  let raw_tests:Test<D>[] = []
   for(let perspective of option.perspectives){
     //------------------------------------------------
     // Expand based on a particular perspective
@@ -237,8 +237,8 @@ export function generateTests<D extends TreeDomain>(
     //------------------------------------------------
     // Expand variables and reflect them in the testcase
     //------------------------------------------------
-    tests = [
-			...tests,
+    raw_tests = [
+			...raw_tests,
 			...generateTestsByPerspective<D>(
 				list_domain,
 				perspective, 
@@ -250,10 +250,35 @@ export function generateTests<D extends TreeDomain>(
 
   // Assign ID to all testcases
   let id = 1
-  for(let t in tests){
-    tests[t]["ID"] = `${id}`
+  for(let t in raw_tests){
+    raw_tests[t]["ID"] = `${id}`
     id++
   }
+
+	//------------------------------------------------
+  // Arrange key order
+	//------------------------------------------------
+	let tests: Test<D>[] = []
+	let body_keys = raw_tests.length > 0
+		? Object.keys(raw_tests[0]).filter(key => !['ID','Perspective','ExpectedResult'].includes(key))
+		: [];
+	for(let t in raw_tests){
+		let num = tests.push({});
+		let k = num - 1;
+
+		// Head
+		tests[k]['ID'] 					= raw_tests[t]['ID'];
+		tests[k]['Perspective'] = raw_tests[t]['Perspective'];
+
+		// Body
+		for(let key of body_keys){
+			tests[k][key] = raw_tests[t][key];
+		}
+
+		// Foot
+		tests[k]['ExpectedResult'] = raw_tests[t]['ExpectedResult'];
+	}
+
   //-----------------------------------------------------
   // File output
   //-----------------------------------------------------
