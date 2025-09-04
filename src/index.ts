@@ -529,14 +529,17 @@ function getFullCoverage<D extends TreeDomain>(
     for(let c in list_domain[variable]){
       const choice = list_domain[variable][c]
       list[variable as any] = choice
-      getFullCoverage(
-        lists, 
-        list,
-        list_domain, 
-        variables, 
-        exclusions,
-        v+1, 
-      )
+			// Call only if not excluded
+			if(!isExcluded(list, exclusions)){
+				getFullCoverage(
+					lists, 
+					list,
+					list_domain, 
+					variables, 
+					exclusions,
+					v+1, 
+				)
+			}
     }
   }else{
     //-------------------------------------------------
@@ -641,14 +644,19 @@ function isExcluded<D extends TreeDomain>(
   return exclusions.some((exclusion) => {
     // Check if there is at least one matching exclusion condition
     return Object.keys(exclusion).every((key)=>{
-		// Check if all conditions within the exclusion match
-      if(exclusion[key] instanceof RegExp){
-        // Check if the regular expression matches
-        return (exclusion[key]).test(test[key])
-      }else{
-        // Check if the strings match
-        return test[key] === exclusion[key]
-      }
+			if(test[key] != undefined && test[key] != null){
+				// Check if all conditions within the exclusion match
+				if(exclusion[key] instanceof RegExp){
+					// Check if the regular expression matches
+					return (exclusion[key]).test(test[key])
+				}else{
+					// Check if the strings match
+					return test[key] === exclusion[key]
+				}
+			}else{
+				// Treat as not matched
+				return false;
+			}
     })
   })
 }
